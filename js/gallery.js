@@ -44,22 +44,22 @@ const openImage = (elem) => {
     if (LightboxRef) {
         lightBoxAction('open');
     }
-    const lightBoxImgRef = document.querySelector('.lightbox__image');
-    console.log(lightBoxImgRef);
     currentImageIndex = elem.target.dataset.index;
     updLightBoxImg (...getImageData(elem.target));
 }
 
 const openImageByIndex = (index, images) => {
- updLightBoxImg (images[Number(index)].original, images[Number(index)].description);
+    if (index >= 0 && index < images.length) {
+        updLightBoxImg(images[Number(index)].original, images[Number(index)].description);
+    }
 }
 
 const updLightBoxImg = (src, alt) => {  
     const lightBoxImgRef = document.querySelector('.lightbox__image');
     lightBoxImgRef.src = '';
     lightBoxImgRef.alt = '';
-    if (src) { lightBoxImgRef.src = src };
-    if (alt) { lightBoxImgRef.alt = alt };   
+    if (src) lightBoxImgRef.src = src;
+    if (alt) lightBoxImgRef.alt = alt;   
 }
 
 const resetLightBoxImg = () => {
@@ -73,30 +73,28 @@ const lightBoxHandler = (event) => {
 }
 
 const keyEventHandler = (event) => {
-    console.log(event.code);
-    if (event.code === 'Escape') {
-        lightBoxAction('close');
-
-    } else if (event.code === 'ArrowRight') {
-        if (currentImageIndex < images.length - 1) {
-            currentImageIndex = Number(currentImageIndex) + 1;
-        openImageByIndex(currentImageIndex, images);   
+    switch (event.code) {
+        case 'Escape': lightBoxAction('close'); break;
+        case 'ArrowRight': {
+            if (currentImageIndex < images.length - 1) {
+                ++currentImageIndex;
+                openImageByIndex(currentImageIndex, images);   
+            }
+            break;
         }
-        
-    } else if (event.code === 'ArrowLeft') {
-        if (currentImageIndex > 0) {
-            currentImageIndex = Number(currentImageIndex) - 1;
-            openImageByIndex(currentImageIndex, images);
+        case 'ArrowLeft': {
+            if (currentImageIndex > 0) {
+                --currentImageIndex;
+                openImageByIndex(currentImageIndex, images);
+            }
+            break;
         }
-        
-    }
+}
 }
 
 
 
 const liItemsArr = images.map((image, index) => createImageItem(image, index));
-console.log(liItemsArr);
-
 
 const divParentRef = document.querySelector('.gallery');
 divParentRef.append(...liItemsArr);
